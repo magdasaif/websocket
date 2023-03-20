@@ -8,10 +8,11 @@ services:
             target: php
             args:
                 - APP_ENV=${APP_ENV}
+        working_dir: /var/www
+        entrypoint: "php /var/www/artisan key:generate && php /var/www/artisan cache:clear && php /var/www/artisan config:clear && php /var/www/artisan route:clear && php /var/www/artisan serve --port=8000 --host=0.0.0.0 --env=.env && php-fpm"
         environment:
             - APP_ENV=${APP_ENV}
             - CONTAINER_ROLE=app
-        working_dir: /var/www
         volumes:
             - ./:/var/www
         ports:
@@ -31,6 +32,7 @@ services:
             - APP_ENV=${APP_ENV}
             - CONTAINER_ROLE=websocket
         working_dir: /var/www
+        entrypoint: "php /var/www/artisan websockets:serve --port=6001 && php-fpm"
         volumes:
             - ./:/var/www
         ports:
@@ -66,10 +68,11 @@ services:
             target: php
             args:
                 - APP_ENV=${APP_ENV}
+        working_dir: /var/www
+        entrypoint: "php /var/www/artisan queue:work --verbose --tries=3 --timeout=180 && php-fpm"
         environment:
             - APP_ENV=${APP_ENV}
             - CONTAINER_ROLE=queue
-        working_dir: /var/www
         volumes:
             - ./:/var/www
 
